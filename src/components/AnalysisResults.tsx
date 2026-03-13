@@ -7,112 +7,137 @@ interface AnalysisResultsProps {
 }
 
 export default function AnalysisResults({ result }: AnalysisResultsProps) {
-  const scoreColor = (score: number) =>
-    score >= 7 ? 'text-green-600' : score >= 5 ? 'text-amber-600' : 'text-red-600'
-
-  const scoreBg = (score: number) =>
-    score >= 7 ? 'bg-green-100' : score >= 5 ? 'bg-amber-100' : 'bg-red-100'
+  const xpEarned = Math.round(result.overallScore * 10)
 
   return (
-    <div className="mt-8 space-y-6">
-      {/* Overall Score */}
-      <div className="p-6 bg-white rounded-xl border border-slate-200 text-center">
-        <p className="text-sm text-slate-500 uppercase tracking-wider">Overall Score</p>
-        <p className={`text-6xl font-bold mt-2 ${scoreColor(result.overallScore)}`}>
-          {result.overallScore}<span className="text-2xl text-slate-400">/10</span>
-        </p>
+    <div className="space-y-4">
+      {/* XP Earned Banner */}
+      <div className="glass-card text-center" style={{
+        background: 'linear-gradient(135deg, rgba(78, 205, 196, 0.15), rgba(91, 141, 239, 0.15))',
+        borderColor: 'rgba(78, 205, 196, 0.2)',
+      }}>
+        <p className="text-3xl font-bold text-aqua-400">+{xpEarned} XP</p>
+        <p className="text-sm text-silver-400">Session Complete</p>
+      </div>
+
+      {/* Overall Score Circle */}
+      <div className="glass-card text-center">
+        <div className="relative w-28 h-28 mx-auto">
+          <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(160, 170, 191, 0.1)" strokeWidth="8" />
+            <circle
+              cx="50" cy="50" r="42" fill="none"
+              stroke={result.overallScore >= 7 ? '#4ECDC4' : result.overallScore >= 5 ? '#F0B840' : '#E85D75'}
+              strokeWidth="8"
+              strokeLinecap="round"
+              strokeDasharray={`${result.overallScore * 26.4} 264`}
+            />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-3xl font-bold text-silver-100">{result.overallScore}</span>
+          </div>
+        </div>
+        <p className="text-xs font-semibold text-silver-500 mt-2 uppercase tracking-wider">Overall Score</p>
       </div>
 
       {/* Category Scores */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: 'Tone', score: result.scores.tone },
-          { label: 'Volume', score: result.scores.volume },
-          { label: 'Articulation', score: result.scores.articulation },
-          { label: 'Pace', score: result.scores.pace },
-        ].map(({ label, score }) => (
-          <div key={label} className={`p-4 rounded-xl text-center ${scoreBg(score)}`}>
-            <p className="text-sm text-slate-600">{label}</p>
-            <p className={`text-3xl font-bold mt-1 ${scoreColor(score)}`}>{score}</p>
-          </div>
-        ))}
+      <div className="grid grid-cols-2 gap-3">
+        <ScoreCard label="Tone" score={result.scores.tone} color="#9B7AEF" />
+        <ScoreCard label="Volume" score={result.scores.volume} color="#5B8DEF" />
+        <ScoreCard label="Articulation" score={result.scores.articulation} color="#F0B840" />
+        <ScoreCard label="Pace" score={result.scores.pace} color="#4ECDC4" />
       </div>
 
       {/* Focus Area */}
-      <div className="p-5 bg-amber-50 border-2 border-amber-200 rounded-xl">
-        <p className="text-sm font-semibold text-amber-800 uppercase tracking-wider">Focus On This</p>
-        <p className="text-lg font-bold text-amber-900 mt-1">{result.focusArea}</p>
-        <p className="text-amber-700 mt-1">{result.focusAreaTip}</p>
+      <div className="glass-card" style={{ borderLeft: '3px solid #F0B840' }}>
+        <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider mb-2">Focus Area</p>
+        <p className="font-semibold text-silver-100">{result.focusArea}</p>
+        <p className="text-sm text-silver-400 mt-2 leading-relaxed">{result.focusAreaTip}</p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 bg-white rounded-xl border border-slate-200">
-          <p className="text-sm text-slate-500">Speaking Pace</p>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{result.wordsPerMinute} <span className="text-sm font-normal text-slate-400">WPM</span></p>
-          <p className="text-xs text-slate-400 mt-1">Ideal: 130-160 WPM</p>
+      {/* Quick Stats */}
+      <div className="flex gap-3">
+        <div className="glass-card-light flex-1 text-center py-3">
+          <p className="text-xl font-bold text-soft-blue">{result.wordsPerMinute}</p>
+          <p className="text-[10px] font-semibold text-silver-500 uppercase">WPM</p>
         </div>
-        <div className="p-4 bg-white rounded-xl border border-slate-200">
-          <p className="text-sm text-slate-500">Filler Words</p>
-          {result.fillerWords.length > 0 ? (
-            <div className="mt-1 flex flex-wrap gap-2">
-              {result.fillerWords.map(fw => (
-                <span key={fw.word} className="px-2 py-1 bg-red-50 text-red-600 rounded text-sm font-medium">
-                  &ldquo;{fw.word}&rdquo; x{fw.count}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p className="text-lg font-bold text-green-600 mt-1">None detected!</p>
-          )}
-        </div>
-      </div>
-
-      {/* Reading Accuracy */}
-      {result.readingAccuracy !== undefined && (
-        <div className="p-4 bg-white rounded-xl border border-slate-200">
-          <p className="text-sm text-slate-500">Reading Accuracy</p>
-          <p className={`text-3xl font-bold mt-1 ${scoreColor(result.readingAccuracy / 10)}`}>
-            {result.readingAccuracy}%
+        <div className="glass-card-light flex-1 text-center py-3">
+          <p className="text-xl font-bold text-amber-400">
+            {result.fillerWords.reduce((s, f) => s + f.count, 0)}
           </p>
+          <p className="text-[10px] font-semibold text-silver-500 uppercase">Fillers</p>
+        </div>
+        {result.readingAccuracy !== undefined && (
+          <div className="glass-card-light flex-1 text-center py-3">
+            <p className="text-xl font-bold text-aqua-400">{result.readingAccuracy}%</p>
+            <p className="text-[10px] font-semibold text-silver-500 uppercase">Accuracy</p>
+          </div>
+        )}
+      </div>
+
+      {/* Filler Words */}
+      {result.fillerWords.length > 0 && (
+        <div className="glass-card">
+          <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider mb-3">Filler Words</p>
+          <div className="flex flex-wrap gap-2">
+            {result.fillerWords.map(fw => (
+              <span key={fw.word} className="px-3 py-1.5 rounded-xl text-sm font-semibold" style={{
+                background: 'rgba(232, 93, 117, 0.1)',
+                color: '#F07088',
+              }}>
+                &ldquo;{fw.word}&rdquo; x{fw.count}
+              </span>
+            ))}
+          </div>
         </div>
       )}
 
       {/* Feedback Items */}
-      <div className="p-6 bg-white rounded-xl border border-slate-200">
-        <h3 className="text-lg font-semibold text-slate-900 mb-4">Detailed Feedback</h3>
-        <div className="space-y-3">
-          {result.feedback.map((item, i) => (
-            <div
-              key={i}
-              className={`p-4 rounded-lg border-l-4 ${
-                item.severity === 'positive' ? 'bg-green-50 border-green-400' :
-                item.severity === 'warning' ? 'bg-red-50 border-red-400' :
-                'bg-blue-50 border-blue-400'
-              }`}
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <span className={`text-xs font-medium uppercase ${
-                  item.severity === 'positive' ? 'text-green-600' :
-                  item.severity === 'warning' ? 'text-red-600' :
-                  'text-blue-600'
-                }`}>
-                  {item.category}
-                </span>
-                {item.timestamp && (
-                  <span className="text-xs text-slate-400">at {item.timestamp}</span>
-                )}
-              </div>
-              <p className="text-slate-700">{item.message}</p>
-            </div>
-          ))}
-        </div>
+      <div className="space-y-2">
+        <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider">Detailed Feedback</p>
+        {result.feedback.map((item, i) => (
+          <div
+            key={i}
+            className="glass-card-light"
+            style={{
+              borderLeft: `3px solid ${
+                item.severity === 'positive' ? '#4ECDC4' :
+                item.severity === 'warning' ? '#E85D75' : '#5B8DEF'
+              }`,
+            }}
+          >
+            <span className="text-[10px] font-semibold uppercase tracking-wider" style={{
+              color: item.severity === 'positive' ? '#4ECDC4' :
+                     item.severity === 'warning' ? '#E85D75' : '#5B8DEF'
+            }}>{item.category}</span>
+            <p className="text-sm text-silver-300 mt-1">{item.message}</p>
+          </div>
+        ))}
       </div>
 
       {/* Transcript */}
-      <div className="p-6 bg-white rounded-xl border border-slate-200">
-        <h3 className="text-lg font-semibold text-slate-900 mb-3">Transcript</h3>
-        <p className="text-slate-600 leading-relaxed whitespace-pre-wrap">{result.transcript}</p>
+      <details className="glass-card">
+        <summary className="text-xs font-semibold text-silver-500 uppercase tracking-wider cursor-pointer">
+          View Transcript
+        </summary>
+        <p className="text-sm text-silver-400 leading-relaxed mt-3">{result.transcript}</p>
+      </details>
+    </div>
+  )
+}
+
+function ScoreCard({ label, score, color }: { label: string; score: number; color: string }) {
+  return (
+    <div className="glass-card-light text-center py-3">
+      <div className="mt-1 bg-navy-800 rounded-full h-2 overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all"
+          style={{ width: `${score * 10}%`, background: color }}
+        />
+      </div>
+      <div className="flex items-center justify-between mt-2">
+        <p className="text-xs text-silver-500">{label}</p>
+        <p className="text-sm font-bold" style={{ color }}>{score}/10</p>
       </div>
     </div>
   )

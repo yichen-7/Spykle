@@ -5,6 +5,7 @@ export interface TongueTwister {
 }
 
 export interface DailyChallenge {
+  topic: string
   instruction: string
   text?: string
   difficulty: 'Easy' | 'Medium' | 'Hard'
@@ -38,68 +39,157 @@ export const tongueTwisters: TongueTwister[] = [
   { text: 'Can you can a canned can into an un-canned can like a canner can can a canned can into an un-canned can?', difficulty: 'Hard', targetSound: 'c/n' },
 ]
 
-export const dailyChallenges: DailyChallenge[] = [
-  {
-    instruction: 'Introduce yourself in 30 seconds. Include your name, what you do, and one interesting fact about yourself.',
-    difficulty: 'Easy',
-  },
-  {
-    instruction: 'Read the following paragraph clearly and with good pace:',
-    text: 'The ability to communicate effectively is one of the most important life skills to develop. Good communication helps you in your personal relationships, at work, and in everyday situations. It involves not just speaking clearly, but also listening actively and responding thoughtfully.',
-    difficulty: 'Easy',
-  },
-  {
-    instruction: 'Explain a topic you know well as if teaching it to a beginner. Speak for 60 seconds.',
-    difficulty: 'Medium',
-  },
-  {
-    instruction: 'Read this tongue twister three times, each time a little faster:',
-    text: 'She sells seashells by the seashore. The shells she sells are seashells, I\'m sure. So if she sells seashells on the seashore, then I\'m sure she sells seashore shells.',
-    difficulty: 'Medium',
-  },
-  {
-    instruction: 'Give a 45-second impromptu speech on this topic: "What is the most underrated skill everyone should learn?"',
-    difficulty: 'Medium',
-  },
-  {
-    instruction: 'Read this passage with emotion, as if telling an exciting story:',
-    text: 'The door creaked open slowly, revealing a room bathed in golden light. In the center stood an old wooden chest, its surface carved with intricate patterns that seemed to dance in the flickering candlelight. My heart raced as I stepped forward, knowing that whatever lay inside would change everything.',
-    difficulty: 'Medium',
-  },
-  {
-    instruction: 'Practice emphasizing different words. Read this sentence five times, each time emphasizing a different word: "I never said she stole my money."',
-    text: 'I never said she stole my money.',
-    difficulty: 'Hard',
-  },
-  {
-    instruction: 'Deliver a 60-second persuasive argument on this topic: "Everyone should learn a musical instrument."',
-    difficulty: 'Hard',
-  },
-  {
-    instruction: 'Record yourself reading this passage at three different speeds: slow, normal, and fast.',
-    text: 'Technology has transformed the way we live, work, and connect with one another. From smartphones to artificial intelligence, innovation continues to push the boundaries of what is possible.',
-    difficulty: 'Medium',
-  },
-  {
-    instruction: 'Practice vocal variety. Read this passage as if you were: 1) a news anchor, 2) telling a bedtime story, 3) giving a motivational speech.',
-    text: 'Every great achievement starts with a single step. The journey of a thousand miles begins with the courage to move forward, even when the path ahead is uncertain.',
-    difficulty: 'Hard',
-  },
-  {
-    instruction: 'Give a 30-second elevator pitch for an imaginary product or service.',
-    difficulty: 'Medium',
-  },
-  {
-    instruction: 'Describe your surroundings in vivid detail for 45 seconds, as if painting a picture with words.',
-    difficulty: 'Easy',
-  },
-  {
-    instruction: 'Practice clear articulation by reading this deliberately and clearly:',
-    text: 'Specifically, the statistical analysis substantially supported the theoretical hypothesis that strategic structural adjustments significantly strengthen institutional infrastructure.',
-    difficulty: 'Hard',
-  },
-  {
-    instruction: 'Tell a short story (real or made up) in exactly 60 seconds. Focus on pacing and dramatic pauses.',
-    difficulty: 'Medium',
-  },
+export const dailyTopics: string[] = [
+  'Why do people procrastinate and how can they stop?',
+  'What makes a good leader?',
+  'Is social media more harmful or helpful?',
+  'What would you change about the education system?',
+  'Describe your perfect day from start to finish.',
+  'Should everyone learn to code? Why or why not?',
+  'What is the most important invention of the last 100 years?',
+  'If you could have dinner with anyone, dead or alive, who and why?',
+  'What does success mean to you?',
+  'Is it better to be feared or loved?',
+  'What skill do you wish you had learned earlier in life?',
+  'Explain why your favorite movie is worth watching.',
+  'What would you do if you had unlimited money for one day?',
+  'Is remote work better than working in an office?',
+  'Describe a challenge you overcame and what you learned.',
+  'What makes a friendship last?',
+  'If you could live in any time period, which would you choose?',
+  'What is one thing everyone should try at least once?',
+  'Is it better to be a specialist or a generalist?',
+  'What role does music play in your life?',
+  'Convince someone to visit your hometown.',
+  'What is the biggest misconception people have about your field?',
+  'Should school start later in the morning?',
+  'Describe how a technology works to someone from the 1800s.',
+  'What is the best advice you have ever received?',
+  'Talk about a book, show, or podcast that changed your perspective.',
+  'Is it important to follow the news? Why or why not?',
+  'What would you tell your younger self?',
+  'Explain why a hobby you enjoy is worth picking up.',
+  'What does it mean to live a good life?',
+  'Should AI be used in schools?',
+  'Describe your morning routine and why it works for you.',
+  'What is one problem in the world you wish you could solve?',
+  'Is competition healthy or toxic?',
+  'Talk about a place that is special to you and why.',
+  'What makes someone a good communicator?',
+  'If you started a business tomorrow, what would it be?',
+  'Is it possible to be truly selfless?',
+  'What is something you changed your mind about?',
+  'Describe what your life will look like in 10 years.',
+  'Should we colonize Mars?',
+  'What is the hardest part about growing up?',
+  'Talk about a person who influenced you the most.',
+  'Is happiness a choice or a circumstance?',
+  'What makes a great teacher?',
+  'Explain a complex idea in simple terms.',
+  'Should voting be mandatory?',
+  'What is one cultural tradition you value?',
+  'Talk about a risk you took and how it turned out.',
+  'What would the world look like without the internet?',
 ]
+
+export interface PhilosophyQuote {
+  quote: string
+  author: string
+  context: string
+}
+
+export const philosophyQuotes: PhilosophyQuote[] = [
+  // Marcus Aurelius
+  { quote: 'You have power over your mind — not outside events. Realize this, and you will find strength.', author: 'Marcus Aurelius', context: 'Meditations' },
+  { quote: 'The happiness of your life depends upon the quality of your thoughts.', author: 'Marcus Aurelius', context: 'Meditations' },
+  { quote: 'Waste no more time arguing about what a good man should be. Be one.', author: 'Marcus Aurelius', context: 'Meditations' },
+  { quote: 'The best revenge is not to be like your enemy.', author: 'Marcus Aurelius', context: 'Meditations' },
+  { quote: 'It is not death that a man should fear, but he should fear never beginning to live.', author: 'Marcus Aurelius', context: 'Meditations' },
+  { quote: 'Very little is needed to make a happy life; it is all within yourself, in your way of thinking.', author: 'Marcus Aurelius', context: 'Meditations' },
+
+  // Nietzsche
+  { quote: 'He who has a why to live can bear almost any how.', author: 'Friedrich Nietzsche', context: 'Twilight of the Idols' },
+  { quote: 'Without music, life would be a mistake.', author: 'Friedrich Nietzsche', context: 'Twilight of the Idols' },
+  { quote: 'Whoever fights monsters should see to it that in the process he does not become a monster.', author: 'Friedrich Nietzsche', context: 'Beyond Good and Evil' },
+  { quote: 'There are no facts, only interpretations.', author: 'Friedrich Nietzsche', context: 'Notebooks' },
+  { quote: 'The individual has always had to struggle to keep from being overwhelmed by the tribe.', author: 'Friedrich Nietzsche', context: 'Beyond Good and Evil' },
+  { quote: 'Man is something that shall be overcome. What have you done to overcome him?', author: 'Friedrich Nietzsche', context: 'Thus Spoke Zarathustra' },
+
+  // Dostoevsky
+  { quote: 'The soul is healed by being with children.', author: 'Fyodor Dostoevsky', context: 'The Idiot' },
+  { quote: 'Pain and suffering are always inevitable for a large intelligence and a deep heart.', author: 'Fyodor Dostoevsky', context: 'Crime and Punishment' },
+  { quote: 'The mystery of human existence lies not in just staying alive, but in finding something to live for.', author: 'Fyodor Dostoevsky', context: 'The Brothers Karamazov' },
+  { quote: 'To go wrong in one\'s own way is better than to go right in someone else\'s.', author: 'Fyodor Dostoevsky', context: 'Crime and Punishment' },
+  { quote: 'Above all, don\'t lie to yourself. The man who lies to himself and listens to his own lie comes to a point that he cannot distinguish the truth within him.', author: 'Fyodor Dostoevsky', context: 'The Brothers Karamazov' },
+
+  // Kafka
+  { quote: 'A book must be the axe for the frozen sea within us.', author: 'Franz Kafka', context: 'Letter to Oskar Pollak' },
+  { quote: 'In the struggle between yourself and the world, side with the world.', author: 'Franz Kafka', context: 'Aphorisms' },
+  { quote: 'Paths are made by walking.', author: 'Franz Kafka', context: 'Notebooks' },
+  { quote: 'Don\'t bend; don\'t water it down; don\'t try to make it logical; don\'t edit your own soul according to the fashion.', author: 'Franz Kafka', context: 'Letters' },
+
+  // Machiavelli
+  { quote: 'Everyone sees what you appear to be, few experience what you really are.', author: 'Niccolo Machiavelli', context: 'The Prince' },
+  { quote: 'The lion cannot protect himself from traps, and the fox cannot defend himself from wolves. One must therefore be a fox to recognize traps, and a lion to frighten wolves.', author: 'Niccolo Machiavelli', context: 'The Prince' },
+  { quote: 'Never was anything great achieved without danger.', author: 'Niccolo Machiavelli', context: 'The Prince' },
+  { quote: 'Men judge generally more by the eye than by the hand, for everyone can see and few can feel.', author: 'Niccolo Machiavelli', context: 'The Prince' },
+
+  // Seneca
+  { quote: 'We suffer more often in imagination than in reality.', author: 'Seneca', context: 'Letters to Lucilius' },
+  { quote: 'Luck is what happens when preparation meets opportunity.', author: 'Seneca', context: 'Letters to Lucilius' },
+  { quote: 'It is not that we have a short time to live, but that we waste a great deal of it.', author: 'Seneca', context: 'On the Shortness of Life' },
+  { quote: 'Difficulties strengthen the mind, as labor does the body.', author: 'Seneca', context: 'Moral Letters' },
+
+  // Epictetus
+  { quote: 'It\'s not what happens to you, but how you react to it that matters.', author: 'Epictetus', context: 'Discourses' },
+  { quote: 'First say to yourself what you would be; and then do what you have to do.', author: 'Epictetus', context: 'Discourses' },
+  { quote: 'No man is free who is not master of himself.', author: 'Epictetus', context: 'Discourses' },
+
+  // Alexander the Great (attributed)
+  { quote: 'There is nothing impossible to him who will try.', author: 'Alexander the Great', context: 'Attributed' },
+  { quote: 'I am not afraid of an army of lions led by a sheep; I am afraid of an army of sheep led by a lion.', author: 'Alexander the Great', context: 'Attributed' },
+  { quote: 'Remember, upon the conduct of each depends the fate of all.', author: 'Alexander the Great', context: 'Attributed' },
+
+  // Sun Tzu
+  { quote: 'Appear weak when you are strong, and strong when you are weak.', author: 'Sun Tzu', context: 'The Art of War' },
+  { quote: 'The supreme art of war is to subdue the enemy without fighting.', author: 'Sun Tzu', context: 'The Art of War' },
+  { quote: 'In the midst of chaos, there is also opportunity.', author: 'Sun Tzu', context: 'The Art of War' },
+
+  // Camus
+  { quote: 'In the depth of winter, I finally learned that within me there lay an invincible summer.', author: 'Albert Camus', context: 'Return to Tipasa' },
+  { quote: 'The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion.', author: 'Albert Camus', context: 'The Rebel' },
+  { quote: 'Should I kill myself, or have a cup of coffee?', author: 'Albert Camus', context: 'The Myth of Sisyphus' },
+
+  // Schopenhauer
+  { quote: 'A man can be himself only so long as he is alone; and if he does not love solitude, he will not love freedom.', author: 'Arthur Schopenhauer', context: 'Counsels and Maxims' },
+  { quote: 'Talent hits a target no one else can hit. Genius hits a target no one else can see.', author: 'Arthur Schopenhauer', context: 'The World as Will and Representation' },
+
+  // Lao Tzu
+  { quote: 'When I let go of what I am, I become what I might be.', author: 'Lao Tzu', context: 'Tao Te Ching' },
+  { quote: 'Knowing others is intelligence; knowing yourself is true wisdom. Mastering others is strength; mastering yourself is true power.', author: 'Lao Tzu', context: 'Tao Te Ching' },
+
+  // Plato / Socrates
+  { quote: 'The unexamined life is not worth living.', author: 'Socrates', context: 'Apology (via Plato)' },
+  { quote: 'I know that I know nothing.', author: 'Socrates', context: 'Apology (via Plato)' },
+  { quote: 'Be kind, for everyone you meet is fighting a hard battle.', author: 'Plato', context: 'Attributed' },
+]
+
+export function getDailyQuote(): PhilosophyQuote {
+  const today = new Date()
+  const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate()
+  // Use a different offset than daily challenge so they don't correlate
+  const index = (seed * 7 + 13) % philosophyQuotes.length
+  return philosophyQuotes[index]
+}
+
+export function getDailyChallenge(): DailyChallenge {
+  // Use the date as seed so everyone gets the same topic per day, but it changes daily
+  const today = new Date()
+  const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate()
+  const index = seed % dailyTopics.length
+  return {
+    topic: dailyTopics[index],
+    instruction: `Talk about this topic for 1 full minute. Speak clearly, stay on topic, and try to fill the entire minute without long pauses.`,
+    difficulty: 'Medium',
+  }
+}

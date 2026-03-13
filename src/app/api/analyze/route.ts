@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
 const ASSEMBLYAI_API_KEY = process.env.ASSEMBLYAI_API_KEY || ''
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || ''
+const GROQ_API_KEY = process.env.GROQ_API_KEY || ''
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,11 +34,16 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         audio_url: upload_url,
+        speech_models: ['universal-2'],
         sentiment_analysis: true,
         disfluencies: true,
       }),
     })
     const transcriptData = await transcriptRes.json()
+    if (transcriptData.error) {
+      console.error('AssemblyAI error:', transcriptData.error)
+      return NextResponse.json({ error: 'Transcription failed: ' + transcriptData.error }, { status: 500 })
+    }
     const transcriptId = transcriptData.id
 
     // Step 3: Poll for completion
@@ -91,8 +96,8 @@ export async function POST(request: NextRequest) {
       readingAccuracy = Math.round((matches / Math.max(refWords.length, 1)) * 100)
     }
 
-    // Step 5: Send to Gemini for comprehensive analysis
-    const geminiPrompt = buildGeminiPrompt({
+    // Step 5: Send to Groq (Llama 3.3 70B) for comprehensive analysis
+    const prompt = buildAnalysisPrompt({
       transcriptText,
       wpm,
       fillerCounts,
@@ -103,35 +108,61 @@ export async function POST(request: NextRequest) {
       userComments,
     })
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: geminiPrompt }] }],
-          generationConfig: {
-            responseMimeType: 'application/json',
-          },
-        }),
-      }
-    )
+    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.3,
+        response_format: { type: 'json_object' },
+      }),
+    })
 
-    const geminiData = await geminiRes.json()
-    const geminiText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '{}'
+    const groqData = await groqRes.json()
+
     let aiAnalysis
-    try {
-      aiAnalysis = JSON.parse(geminiText)
-    } catch {
+    if (groqData.error) {
+      console.error('Groq API error:', groqData.error.message)
+      // Fallback: generate basic analysis from metrics alone
+      const totalFillers = Object.values(fillerCounts).reduce((a: number, b) => a + (b as number), 0)
+      const paceScore = wpm >= 120 && wpm <= 170 ? 8 : wpm >= 100 && wpm <= 190 ? 6 : 4
+      const artScore = totalFillers === 0 ? 9 : totalFillers <= 3 ? 7 : totalFillers <= 6 ? 5 : 3
+      const overall = Math.round((paceScore + artScore + 6 + 6) / 4)
       aiAnalysis = {
-        overallScore: 5,
-        toneScore: 5,
-        volumeScore: 5,
-        articulationScore: 5,
-        paceScore: 5,
-        focusArea: 'General',
-        focusAreaTip: 'Keep practicing regularly to improve.',
-        feedback: [{ category: 'general', message: 'Analysis completed. Keep practicing!', severity: 'suggestion' }],
+        overallScore: overall,
+        toneScore: 6,
+        volumeScore: 6,
+        articulationScore: artScore,
+        paceScore: paceScore,
+        focusArea: artScore < paceScore ? 'Articulation' : 'Pace',
+        focusAreaTip: artScore < paceScore
+          ? `You used ${totalFillers} filler word(s). Try pausing silently instead of saying "um" or "uh".`
+          : `Your pace was ${wpm} WPM. Aim for 130-160 WPM for clear communication.`,
+        feedback: [
+          { category: 'pace', message: `Your speaking pace was ${wpm} words per minute. ${wpm > 170 ? 'Try slowing down.' : wpm < 110 ? 'Try speaking a bit faster.' : 'Good pace!'}`, severity: wpm >= 120 && wpm <= 170 ? 'positive' : 'suggestion' },
+          { category: 'articulation', message: totalFillers > 0 ? `Detected ${totalFillers} filler word(s): ${Object.entries(fillerCounts).map(([w, c]) => `"${w}" x${c}`).join(', ')}. Practice pausing instead.` : 'No filler words detected — great job!', severity: totalFillers > 3 ? 'warning' : totalFillers > 0 ? 'suggestion' : 'positive' },
+          { category: 'general', message: 'Note: Detailed AI feedback is temporarily unavailable. Scores are based on measured metrics.', severity: 'suggestion' },
+        ],
+      }
+    } else {
+      const responseText = groqData.choices?.[0]?.message?.content || '{}'
+      try {
+        aiAnalysis = JSON.parse(responseText)
+      } catch {
+        aiAnalysis = {
+          overallScore: 5,
+          toneScore: 5,
+          volumeScore: 5,
+          articulationScore: 5,
+          paceScore: 5,
+          focusArea: 'General',
+          focusAreaTip: 'Keep practicing regularly to improve.',
+          feedback: [{ category: 'general', message: 'Analysis completed. Keep practicing!', severity: 'suggestion' }],
+        }
       }
     }
 
@@ -180,7 +211,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function buildGeminiPrompt(params: {
+function buildAnalysisPrompt(params: {
   transcriptText: string
   wpm: number
   fillerCounts: Record<string, number>
@@ -234,7 +265,7 @@ Respond in this exact JSON format:
   "articulationScore": <1-10>,
   "paceScore": <1-10>,
   "focusArea": "<the weakest area: Tone, Volume, Articulation, or Pace>",
-  "focusAreaTip": "<one specific, actionable tip to improve the weakest area>",
+  "focusAreaTip": "<a detailed 3-4 sentence explanation of what exactly went wrong, why it matters, and a concrete exercise the speaker can do right now to improve. Reference specific parts of their speech.>",
   "feedback": [
     {
       "category": "<tone|volume|articulation|pace|general>",

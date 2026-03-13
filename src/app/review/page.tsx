@@ -24,48 +24,43 @@ export default function ReviewPage() {
   }
 
   return (
-    <div className="max-w-4xl">
-      <h1 className="text-3xl font-bold text-slate-900">Video Review</h1>
-      <p className="mt-2 text-slate-600">
-        Record or upload a video, add comments at specific timestamps, and get AI analysis.
-      </p>
+    <div className="space-y-5">
+      <div className="text-center">
+        <h1 className="text-xl font-bold text-silver-100">Video Review</h1>
+        <p className="text-sm text-silver-500 mt-1">Record, comment, and analyze</p>
+      </div>
 
       {mode === 'choose' && (
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <button
-            onClick={() => setMode('record')}
-            className="p-8 bg-white rounded-xl border-2 border-violet-200 hover:border-violet-400 transition-colors text-left"
-          >
-            <div className="text-3xl mb-3">●</div>
-            <h3 className="text-lg font-semibold text-slate-900">Record Video</h3>
-            <p className="mt-1 text-sm text-slate-500">Record yourself using your webcam</p>
+        <div className="space-y-3">
+          <button onClick={() => setMode('record')} className="btn-rose w-full">
+            Record Video
           </button>
-          <label className="p-8 bg-white rounded-xl border-2 border-violet-200 hover:border-violet-400 transition-colors text-left cursor-pointer">
+          <label className="btn-secondary w-full block text-center cursor-pointer">
             <input type="file" accept="video/*" onChange={handleUpload} className="hidden" />
-            <div className="text-3xl mb-3">↑</div>
-            <h3 className="text-lg font-semibold text-slate-900">Upload Video</h3>
-            <p className="mt-1 text-sm text-slate-500">Upload an existing video file</p>
+            Upload Video
           </label>
         </div>
       )}
 
       {mode === 'record' && (
-        <div className="mt-6">
+        <div className="space-y-4">
           <button
             onClick={() => setMode('choose')}
-            className="mb-4 text-sm text-brand-600 hover:text-brand-700"
+            className="text-sm text-aqua-400 hover:text-aqua-300 font-semibold transition-colors"
           >
             &larr; Back
           </button>
-          <VideoRecorder onRecordingComplete={handleRecordComplete} />
+          <div className="glass-card">
+            <VideoRecorder onRecordingComplete={handleRecordComplete} />
+          </div>
         </div>
       )}
 
       {mode === 'review' && videoBlob && (
-        <div className="mt-6">
+        <div className="space-y-4">
           <button
             onClick={() => { setMode('choose'); setVideoBlob(null); setVideoUrl('') }}
-            className="mb-4 text-sm text-brand-600 hover:text-brand-700"
+            className="text-sm text-aqua-400 hover:text-aqua-300 font-semibold transition-colors"
           >
             &larr; Start Over
           </button>

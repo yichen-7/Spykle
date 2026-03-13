@@ -54,49 +54,41 @@ export default function ReadPage() {
   }
 
   return (
-    <div className="max-w-4xl">
-      <h1 className="text-3xl font-bold text-slate-900">Read Aloud</h1>
-      <p className="mt-2 text-slate-600">
-        Upload a PDF or text file, read it aloud, and get feedback on accuracy and fluency.
-      </p>
-
-      <div className="mt-6">
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".pdf,.txt"
-          onChange={handleFileUpload}
-          className="hidden"
-        />
-        <button
-          onClick={() => fileInputRef.current?.click()}
-          className="px-6 py-3 bg-brand-600 text-white rounded-lg font-medium hover:bg-brand-700 transition-colors"
-        >
-          Upload PDF or Text File
-        </button>
-        {fileName && (
-          <span className="ml-3 text-sm text-slate-500">{fileName}</span>
-        )}
+    <div className="space-y-5">
+      <div className="text-center">
+        <h1 className="text-xl font-bold text-silver-100">Read Aloud</h1>
+        <p className="text-sm text-silver-500 mt-1">Upload text and practice reading</p>
       </div>
 
+      {/* Upload */}
+      <input ref={fileInputRef} type="file" accept=".pdf,.txt" onChange={handleFileUpload} className="hidden" />
+      <button onClick={() => fileInputRef.current?.click()} className="btn-soft-blue w-full">
+        Upload PDF or Text File
+      </button>
+      {fileName && (
+        <p className="text-center text-sm text-silver-500">{fileName}</p>
+      )}
+
+      {/* Text Display */}
       {bookText && (
-        <div className="mt-6 p-6 bg-white rounded-xl border border-slate-200 max-h-64 overflow-y-auto">
-          <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Text to Read</h3>
-          <p className="text-slate-800 leading-relaxed whitespace-pre-wrap">{bookText}</p>
+        <div className="glass-card max-h-48 overflow-y-auto">
+          <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider mb-2">Text to Read</p>
+          <p className="text-silver-300 leading-relaxed whitespace-pre-wrap text-sm">{bookText}</p>
         </div>
       )}
 
+      {/* Record */}
       {bookText && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-3">Record Your Reading</h3>
+        <div className="glass-card">
+          <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider mb-3">Record Your Reading</p>
           <AudioRecorder onRecordingComplete={handleRecordingComplete} />
         </div>
       )}
 
       {analyzing && (
-        <div className="mt-8 p-8 bg-white rounded-xl border border-slate-200 text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-brand-200 border-t-brand-600 rounded-full mx-auto"></div>
-          <p className="mt-4 text-slate-600">Analyzing your reading...</p>
+        <div className="glass-card text-center py-8">
+          <div className="w-10 h-10 mx-auto mb-3 rounded-full border-2 border-aqua-400 border-t-transparent animate-spin" />
+          <p className="font-semibold text-silver-300">Analyzing your reading...</p>
         </div>
       )}
 

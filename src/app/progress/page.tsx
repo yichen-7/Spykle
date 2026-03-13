@@ -25,101 +25,108 @@ export default function ProgressPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  const averageScore = sessions.length > 0
+  const totalXP = sessions.reduce((sum, s) => sum + Math.round(s.overallScore * 10), 0)
+  const level = Math.floor(totalXP / 100) + 1
+  const avgScore = sessions.length > 0
     ? (sessions.reduce((sum, s) => sum + s.overallScore, 0) / sessions.length).toFixed(1)
-    : null
-
-  const latestScores = sessions.slice(0, 5)
+    : '0'
 
   const weakestArea = sessions.length > 0 ? (() => {
-    const avgTone = sessions.reduce((s, x) => s + x.toneScore, 0) / sessions.length
-    const avgVol = sessions.reduce((s, x) => s + x.volumeScore, 0) / sessions.length
-    const avgArt = sessions.reduce((s, x) => s + x.articulationScore, 0) / sessions.length
-    const avgPace = sessions.reduce((s, x) => s + x.paceScore, 0) / sessions.length
-    const min = Math.min(avgTone, avgVol, avgArt, avgPace)
-    if (min === avgTone) return 'Tone'
-    if (min === avgVol) return 'Volume'
-    if (min === avgArt) return 'Articulation'
-    return 'Pace'
+    const avg = (key: keyof SessionSummary) => sessions.reduce((s, x) => s + (x[key] as number), 0) / sessions.length
+    const scores = { Tone: avg('toneScore'), Volume: avg('volumeScore'), Articulation: avg('articulationScore'), Pace: avg('paceScore') }
+    return Object.entries(scores).sort((a, b) => a[1] - b[1])[0][0]
   })() : null
 
   return (
-    <div className="max-w-4xl">
-      <h1 className="text-3xl font-bold text-slate-900">Progress</h1>
-      <p className="mt-2 text-slate-600">
-        Track your improvement over time and identify areas to focus on.
-      </p>
+    <div className="space-y-5">
+      <div className="text-center">
+        <h1 className="text-xl font-bold text-silver-100">Progress</h1>
+        <p className="text-sm text-silver-500 mt-1">Track your improvement</p>
+      </div>
 
       {loading ? (
-        <div className="mt-8 text-center text-slate-400">Loading...</div>
+        <div className="glass-card text-center py-8">
+          <div className="w-10 h-10 mx-auto rounded-full border-2 border-aqua-400 border-t-transparent animate-spin" />
+        </div>
       ) : sessions.length === 0 ? (
-        <div className="mt-8 p-8 bg-white rounded-xl border border-slate-200 text-center">
-          <p className="text-slate-500">No sessions yet. Go to <strong>Record</strong> to get started!</p>
+        <div className="glass-card text-center py-8">
+          <p className="font-semibold text-silver-300">No sessions yet</p>
+          <p className="text-sm text-silver-500 mt-1">Complete your first recording to see progress</p>
+          <a href="/record" className="btn-primary inline-block mt-4">Start Recording</a>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-            <div className="p-6 bg-white rounded-xl border border-slate-200">
-              <p className="text-sm text-slate-500">Total Sessions</p>
-              <p className="text-3xl font-bold text-slate-900 mt-1">{sessions.length}</p>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="glass-card text-center">
+              <p className="text-3xl font-bold text-aqua-400">{level}</p>
+              <p className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider">Level</p>
             </div>
-            <div className="p-6 bg-white rounded-xl border border-slate-200">
-              <p className="text-sm text-slate-500">Average Score</p>
-              <p className="text-3xl font-bold text-brand-600 mt-1">{averageScore}/10</p>
+            <div className="glass-card text-center">
+              <p className="text-3xl font-bold text-amber-400">{totalXP}</p>
+              <p className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider">Total XP</p>
             </div>
-            <div className="p-6 bg-white rounded-xl border border-slate-200">
-              <p className="text-sm text-slate-500">Focus Area</p>
-              <p className="text-3xl font-bold text-amber-600 mt-1">{weakestArea}</p>
+            <div className="glass-card text-center">
+              <p className="text-3xl font-bold text-soft-blue">{avgScore}</p>
+              <p className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider">Avg Score</p>
             </div>
-          </div>
-
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold text-slate-900 mb-4">Recent Sessions</h2>
-            <div className="space-y-3">
-              {latestScores.map(session => (
-                <div key={session.id} className="p-4 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-slate-900">{session.mode} session</p>
-                    <p className="text-sm text-slate-500">{new Date(session.date).toLocaleDateString()}</p>
-                  </div>
-                  <div className="flex gap-4 text-sm">
-                    <ScorePill label="Overall" score={session.overallScore} />
-                    <ScorePill label="Tone" score={session.toneScore} />
-                    <ScorePill label="Vol" score={session.volumeScore} />
-                    <ScorePill label="Art" score={session.articulationScore} />
-                    <ScorePill label="Pace" score={session.paceScore} />
-                  </div>
-                </div>
-              ))}
+            <div className="glass-card text-center">
+              <p className="text-3xl font-bold text-soft-purple">{sessions.length}</p>
+              <p className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider">Sessions</p>
             </div>
           </div>
 
-          <div className="mt-8 p-6 bg-white rounded-xl border border-slate-200">
-            <h2 className="text-lg font-semibold text-slate-900 mb-3">Score Trend</h2>
-            <div className="h-40 flex items-end gap-2">
-              {sessions.slice(0, 20).reverse().map((s, i) => (
+          {/* Weakest Area */}
+          {weakestArea && (
+            <div className="glass-card" style={{ borderLeft: '3px solid #F0B840' }}>
+              <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider">Focus Area</p>
+              <p className="font-bold text-lg text-silver-100 mt-1">{weakestArea}</p>
+            </div>
+          )}
+
+          {/* Score Trend */}
+          <div className="glass-card">
+            <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider mb-3">Score Trend</p>
+            <div className="h-32 flex items-end gap-1.5">
+              {sessions.slice(0, 15).reverse().map((s, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
                   <div
-                    className="w-full bg-brand-400 rounded-t"
-                    style={{ height: `${(s.overallScore / 10) * 100}%` }}
+                    className="w-full rounded-t-lg"
+                    style={{
+                      height: `${(s.overallScore / 10) * 100}%`,
+                      minHeight: '4px',
+                      background: 'linear-gradient(to top, #3BA99E, #4ECDC4)',
+                    }}
                   />
-                  <span className="text-xs text-slate-400">{s.overallScore}</span>
+                  <span className="text-[10px] text-silver-600 font-semibold">{s.overallScore}</span>
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Recent Sessions */}
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider">Recent Sessions</p>
+            {sessions.slice(0, 8).map(session => (
+              <div key={session.id} className="glass-card-light flex items-center justify-between py-3">
+                <div>
+                  <p className="font-semibold text-silver-200 text-sm capitalize">{session.mode}</p>
+                  <p className="text-xs text-silver-600">{new Date(session.date).toLocaleDateString()}</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className={`text-lg font-bold ${
+                    session.overallScore >= 7 ? 'text-aqua-400' :
+                    session.overallScore >= 5 ? 'text-amber-400' : 'text-rose-400'
+                  }`}>
+                    {session.overallScore}
+                  </span>
+                  <span className="text-xs text-silver-600">/10</span>
+                </div>
+              </div>
+            ))}
           </div>
         </>
       )}
-    </div>
-  )
-}
-
-function ScorePill({ label, score }: { label: string; score: number }) {
-  const color = score >= 7 ? 'text-green-600' : score >= 5 ? 'text-amber-600' : 'text-red-600'
-  return (
-    <div className="text-center">
-      <p className="text-xs text-slate-400">{label}</p>
-      <p className={`font-semibold ${color}`}>{score}</p>
     </div>
   )
 }

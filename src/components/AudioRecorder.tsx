@@ -30,10 +30,10 @@ export default function AudioRecorder({ onRecordingComplete }: AudioRecorderProp
     const dataArray = new Uint8Array(bufferLength)
     analyser.getByteTimeDomainData(dataArray)
 
-    ctx.fillStyle = '#f8fafc'
+    ctx.fillStyle = 'rgba(17, 28, 50, 0.95)'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     ctx.lineWidth = 2
-    ctx.strokeStyle = '#4c6ef5'
+    ctx.strokeStyle = '#4ECDC4'
     ctx.beginPath()
 
     const sliceWidth = canvas.width / bufferLength
@@ -126,55 +126,44 @@ export default function AudioRecorder({ onRecordingComplete }: AudioRecorderProp
   }
 
   return (
-    <div className="p-6 bg-white rounded-xl border border-slate-200">
+    <div>
       <canvas
         ref={canvasRef}
         width={600}
-        height={100}
-        className="w-full h-24 rounded-lg bg-slate-50 mb-4"
+        height={80}
+        className="w-full h-16 rounded-xl mb-4"
+        style={{ background: 'rgba(17, 28, 50, 0.95)' }}
       />
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          {!isRecording ? (
-            <button
-              onClick={startRecording}
-              className="px-6 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors flex items-center gap-2"
-            >
-              <span className="w-3 h-3 bg-white rounded-full"></span>
-              Record
-            </button>
-          ) : (
-            <>
-              <button
-                onClick={togglePause}
-                className="px-4 py-3 bg-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-300 transition-colors"
-              >
-                {isPaused ? 'Resume' : 'Pause'}
-              </button>
-              <button
-                onClick={stopRecording}
-                className="px-6 py-3 bg-slate-800 text-white rounded-lg font-medium hover:bg-slate-900 transition-colors"
-              >
-                Stop
-              </button>
-            </>
-          )}
+      {isRecording && (
+        <div className="text-center mb-4">
+          <span className="text-3xl font-bold text-silver-100 font-mono">{formatTime(duration)}</span>
+          <div className="flex items-center justify-center gap-2 mt-1">
+            <span className={`w-2 h-2 rounded-full ${isPaused ? 'bg-amber-400' : 'bg-rose-500 animate-pulse'}`} />
+            <span className="text-sm text-silver-500">{isPaused ? 'Paused' : 'Recording'}</span>
+          </div>
         </div>
+      )}
 
-        <div className="text-lg font-mono text-slate-600">
-          {isRecording && (
-            <span className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${isPaused ? 'bg-yellow-500' : 'bg-red-500 animate-pulse'}`}></span>
-              {formatTime(duration)}
-            </span>
-          )}
-        </div>
+      <div className="flex justify-center gap-3">
+        {!isRecording ? (
+          <button onClick={startRecording} className="btn-rose w-full">
+            Start Recording
+          </button>
+        ) : (
+          <>
+            <button onClick={togglePause} className="btn-secondary flex-1">
+              {isPaused ? 'Resume' : 'Pause'}
+            </button>
+            <button onClick={stopRecording} className="btn-primary flex-1">
+              Stop
+            </button>
+          </>
+        )}
       </div>
 
       {audioUrl && (
-        <div className="mt-4 pt-4 border-t border-slate-100">
-          <p className="text-sm text-slate-500 mb-2">Playback</p>
+        <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(160, 170, 191, 0.1)' }}>
           <audio controls src={audioUrl} className="w-full" />
         </div>
       )}

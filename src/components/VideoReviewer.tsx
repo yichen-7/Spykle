@@ -58,51 +58,41 @@ export default function VideoReviewer({ videoUrl, videoBlob }: VideoReviewerProp
   }
 
   return (
-    <div className="space-y-6">
-      <video ref={videoRef} controls src={videoUrl} className="w-full rounded-lg bg-black aspect-video" />
+    <div className="space-y-4">
+      <video ref={videoRef} controls src={videoUrl} className="w-full rounded-2xl bg-navy-900 aspect-video" />
 
       {/* Comment Input */}
-      <div className="p-4 bg-white rounded-xl border border-slate-200">
-        <p className="text-sm text-slate-500 mb-2">
-          Pause the video at any point and add a comment about what you notice.
-        </p>
+      <div className="glass-card">
+        <p className="text-xs text-silver-500 mb-2 font-semibold">Pause and add comments about what you notice</p>
         <div className="flex gap-2">
           <input
             type="text"
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addComment()}
-            placeholder="e.g. I think I'm mumbling here..."
-            className="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            placeholder="e.g. I'm mumbling here..."
+            className="flex-1 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-aqua-400/50 text-silver-200 placeholder-silver-600"
+            style={{ background: 'rgba(17, 28, 50, 0.8)', border: '1px solid rgba(160, 170, 191, 0.1)' }}
           />
-          <button
-            onClick={addComment}
-            className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 transition-colors"
-          >
-            Add Comment
+          <button onClick={addComment} className="btn-primary !py-2.5 !px-4 text-sm">
+            Add
           </button>
         </div>
       </div>
 
-      {/* Comments List */}
+      {/* Comments */}
       {comments.length > 0 && (
-        <div className="p-4 bg-white rounded-xl border border-slate-200">
-          <h3 className="text-sm font-semibold text-slate-900 mb-3">Your Comments ({comments.length})</h3>
+        <div className="glass-card">
+          <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider mb-2">Your Comments ({comments.length})</p>
           <div className="space-y-2">
             {comments.map(c => (
-              <div key={c.id} className="flex items-start gap-3 p-2 rounded hover:bg-slate-50">
-                <button
-                  onClick={() => seekTo(c.timestamp)}
-                  className="text-xs font-mono text-brand-600 hover:text-brand-700 whitespace-nowrap mt-0.5"
-                >
+              <div key={c.id} className="flex items-start gap-3 p-2 rounded-lg" style={{ background: 'rgba(17, 28, 50, 0.4)' }}>
+                <button onClick={() => seekTo(c.timestamp)} className="text-xs font-mono text-aqua-400 font-semibold whitespace-nowrap mt-0.5">
                   {formatTime(c.timestamp)}
                 </button>
-                <p className="text-sm text-slate-700">{c.text}</p>
-                <button
-                  onClick={() => setComments(prev => prev.filter(x => x.id !== c.id))}
-                  className="text-xs text-slate-400 hover:text-red-500 ml-auto"
-                >
-                  remove
+                <p className="text-sm text-silver-300 flex-1">{c.text}</p>
+                <button onClick={() => setComments(prev => prev.filter(x => x.id !== c.id))} className="text-xs text-silver-600 hover:text-rose-400 font-semibold transition-colors">
+                  x
                 </button>
               </div>
             ))}
@@ -110,19 +100,14 @@ export default function VideoReviewer({ videoUrl, videoBlob }: VideoReviewerProp
         </div>
       )}
 
-      {/* Analyze Button */}
-      <button
-        onClick={analyzeVideo}
-        disabled={analyzing}
-        className="w-full py-3 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50"
-      >
+      <button onClick={analyzeVideo} disabled={analyzing} className="btn-primary w-full disabled:opacity-50">
         {analyzing ? 'Analyzing...' : 'Analyze Video'}
       </button>
 
       {analyzing && (
-        <div className="p-8 bg-white rounded-xl border border-slate-200 text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-violet-200 border-t-violet-600 rounded-full mx-auto"></div>
-          <p className="mt-4 text-slate-600">Analyzing your video...</p>
+        <div className="glass-card text-center py-8">
+          <div className="w-10 h-10 mx-auto mb-3 rounded-full border-2 border-aqua-400 border-t-transparent animate-spin" />
+          <p className="font-semibold text-silver-300">Analyzing your video...</p>
         </div>
       )}
 

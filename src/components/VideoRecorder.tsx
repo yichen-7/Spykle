@@ -72,47 +72,40 @@ export default function VideoRecorder({ onRecordingComplete }: VideoRecorderProp
   const formatTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`
 
   return (
-    <div className="p-6 bg-white rounded-xl border border-slate-200">
+    <div>
       {!recordedUrl ? (
         <video
           ref={videoRef}
           autoPlay
           muted
           playsInline
-          className="w-full rounded-lg bg-black aspect-video"
+          className="w-full rounded-xl bg-navy-900 aspect-video"
         />
       ) : (
         <video
           ref={playbackRef}
           controls
           src={recordedUrl}
-          className="w-full rounded-lg bg-black aspect-video"
+          className="w-full rounded-xl bg-navy-900 aspect-video"
         />
       )}
 
       <div className="mt-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-1">
           {!isRecording && !recordedUrl && (
-            <button
-              onClick={startRecording}
-              className="px-6 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors flex items-center gap-2"
-            >
-              <span className="w-3 h-3 bg-white rounded-full"></span>
+            <button onClick={startRecording} className="btn-rose w-full">
               Record
             </button>
           )}
           {isRecording && (
-            <button
-              onClick={stopRecording}
-              className="px-6 py-3 bg-slate-800 text-white rounded-lg font-medium hover:bg-slate-900 transition-colors"
-            >
+            <button onClick={stopRecording} className="btn-primary w-full">
               Stop Recording
             </button>
           )}
           {recordedUrl && (
             <button
               onClick={() => { setRecordedUrl(''); startCamera() }}
-              className="px-6 py-3 bg-brand-600 text-white rounded-lg font-medium hover:bg-brand-700 transition-colors"
+              className="btn-secondary w-full"
             >
               Record Again
             </button>
@@ -120,8 +113,8 @@ export default function VideoRecorder({ onRecordingComplete }: VideoRecorderProp
         </div>
 
         {isRecording && (
-          <span className="flex items-center gap-2 text-lg font-mono text-slate-600">
-            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+          <span className="flex items-center gap-2 text-lg font-mono text-silver-300 ml-4">
+            <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
             {formatTime(duration)}
           </span>
         )}
