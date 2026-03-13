@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable} font-sans`}>
         <Nav />
-        <main className="max-w-2xl mx-auto px-5 pb-32 pt-6">
+        <main className="max-w-5xl mx-auto px-8 pb-32 pt-6">
           {children}
         </main>
       </body>

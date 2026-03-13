@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import AudioRecorder from '@/components/AudioRecorder'
 import AnalysisResults from '@/components/AnalysisResults'
-import { tongueTwisters, getDailyChallenge, getDailyQuote } from '@/lib/exercises'
+import { tongueTwisters, getDailyQuote } from '@/lib/exercises'
 import type { AnalysisResult } from '@/types/analysis'
 
 export default function PracticePage() {
@@ -12,8 +12,88 @@ export default function PracticePage() {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null)
   const [analyzing, setAnalyzing] = useState(false)
 
-  const todayChallenge = useMemo(() => getDailyChallenge(), [])
+  // Personalized topic state
+  const [interests, setInterests] = useState<string>('')
+  const [interestsSaved, setInterestsSaved] = useState(false)
+  const [interestsInput, setInterestsInput] = useState('')
+  const [topic, setTopic] = useState<{ topic: string; context: string } | null>(null)
+  const [loadingTopic, setLoadingTopic] = useState(false)
+
   const todayQuote = useMemo(() => getDailyQuote(), [])
+
+  // Load saved interests on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('spykle-interests')
+    if (saved) {
+      setInterests(saved)
+      setInterestsSaved(true)
+    }
+  }, [])
+
+  // Load cached topic or generate new one
+  const generateTopic = useCallback(async (userInterests: string) => {
+    const today = new Date().toISOString().split('T')[0]
+    const cacheKey = `spykle-topic-${today}`
+    const cached = localStorage.getItem(cacheKey)
+
+    if (cached) {
+      setTopic(JSON.parse(cached))
+      return
+    }
+
+    setLoadingTopic(true)
+    try {
+      const res = await fetch('/api/generate-topic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ interests: userInterests }),
+      })
+      if (!res.ok) throw new Error('Failed')
+      const data = await res.json()
+      setTopic(data)
+      localStorage.setItem(cacheKey, JSON.stringify(data))
+    } catch {
+      setTopic({ topic: 'Talk about something you learned recently that surprised you.', context: 'Fallback topic' })
+    } finally {
+      setLoadingTopic(false)
+    }
+  }, [])
+
+  // Generate topic when interests are available and tab is daily
+  useEffect(() => {
+    if (interestsSaved && interests && tab === 'daily' && !topic) {
+      generateTopic(interests)
+    }
+  }, [interestsSaved, interests, tab, topic, generateTopic])
+
+  const saveInterests = () => {
+    if (!interestsInput.trim()) return
+    const val = interestsInput.trim()
+    localStorage.setItem('spykle-interests', val)
+    setInterests(val)
+    setInterestsSaved(true)
+    generateTopic(val)
+  }
+
+  const resetInterests = () => {
+    localStorage.removeItem('spykle-interests')
+    // Clear all cached topics
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i)
+      if (key?.startsWith('spykle-topic-')) localStorage.removeItem(key)
+    }
+    setInterests('')
+    setInterestsSaved(false)
+    setInterestsInput('')
+    setTopic(null)
+  }
+
+  const newTopic = async () => {
+    const today = new Date().toISOString().split('T')[0]
+    localStorage.removeItem(`spykle-topic-${today}`)
+    setTopic(null)
+    await generateTopic(interests)
+  }
 
   const handleRecordingComplete = async (blob: Blob) => {
     setAnalyzing(true)
@@ -80,22 +160,66 @@ export default function PracticePage() {
         </div>
       )}
 
-      {/* Daily Topic */}
+      {/* Daily Topic — personalized */}
       {tab === 'daily' && (
         <div className="mt-8 space-y-6">
-          <div className="border-l-2 border-black pl-5">
-            <p className="text-xs text-stone uppercase tracking-wider">Today&apos;s topic</p>
-            <p className="font-serif text-xl font-bold mt-2">&ldquo;{todayChallenge.topic}&rdquo;</p>
-          </div>
-          <p className="text-sm text-stone">{todayChallenge.instruction}</p>
-          <div className="bg-sand rounded-2xl p-6">
-            <AudioRecorder
-              onRecordingComplete={(blob) => {
-                setSelectedExercise(todayChallenge.topic)
-                handleRecordingComplete(blob)
-              }}
-            />
-          </div>
+          {!interestsSaved ? (
+            <div>
+              <p className="font-serif text-xl font-bold">What are you into?</p>
+              <p className="text-sm text-stone mt-2">
+                Tell me your hobbies, favorite shows, topics you care about — I&apos;ll
+                generate speaking topics you&apos;ll actually want to talk about.
+              </p>
+              <textarea
+                value={interestsInput}
+                onChange={(e) => setInterestsInput(e.target.value)}
+                placeholder="e.g. basketball, anime, philosophy, history, Breaking Bad, startups, cooking..."
+                className="mt-4 w-full bg-white border border-gray-200 rounded-xl p-4 text-sm focus:outline-none focus:border-gray-400 resize-none h-24"
+              />
+              <button
+                onClick={saveInterests}
+                className="mt-3 bg-black text-white rounded-full py-3 px-6 text-sm font-medium hover:bg-gray-800 transition-colors"
+              >
+                Save
+              </button>
+            </div>
+          ) : loadingTopic ? (
+            <div className="text-center py-8">
+              <p className="text-stone">Generating your topic...</p>
+            </div>
+          ) : topic ? (
+            <>
+              <div className="border-l-2 border-black pl-5">
+                <p className="text-xs text-stone uppercase tracking-wider">Today&apos;s topic</p>
+                <p className="font-serif text-xl font-bold mt-2">&ldquo;{topic.topic}&rdquo;</p>
+                <p className="text-sm text-stone mt-2">{topic.context}</p>
+              </div>
+              <p className="text-sm text-stone">Talk about this for one full minute.</p>
+              <div className="bg-sand rounded-2xl p-6">
+                <AudioRecorder
+                  onRecordingComplete={(blob) => {
+                    setSelectedExercise(topic.topic)
+                    handleRecordingComplete(blob)
+                  }}
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={newTopic}
+                  className="text-sm text-stone hover:text-black transition-colors"
+                >
+                  Different topic
+                </button>
+                <span className="text-stone">&middot;</span>
+                <button
+                  onClick={resetInterests}
+                  className="text-sm text-stone hover:text-black transition-colors"
+                >
+                  Change interests
+                </button>
+              </div>
+            </>
+          ) : null}
         </div>
       )}
 

@@ -8,9 +8,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        cream: '#FAF8F5',
-        sand: '#E8E0D4',
-        warm: '#D4CBC0',
+        cream: '#F5F0EA',
+        sand: '#DDD4C6',
+        warm: '#C9BFB0',
         stone: '#A89F95',
       },
       fontFamily: {
