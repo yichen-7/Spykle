@@ -37,46 +37,30 @@ export default function RecordPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="text-center">
-        <h1 className="text-xl font-bold text-silver-100">Record & Analyze</h1>
-        <p className="text-sm text-silver-500 mt-1">Speak and get instant AI feedback</p>
-      </div>
+    <div className="pt-8">
+      <h1 className="font-serif text-3xl font-bold">Record & Analyze</h1>
+      <p className="text-stone mt-2">Speak and get instant feedback on your delivery.</p>
 
-      {/* Mode Toggle */}
-      <div className="flex gap-2">
+      <div className="mt-8 flex gap-2">
         <button
           onClick={() => setMode('audio')}
-          className={`flex-1 py-3 rounded-2xl font-semibold text-sm transition-all ${
-            mode === 'audio'
-              ? 'bg-aqua-400 text-navy-900'
-              : 'text-silver-400'
+          className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
+            mode === 'audio' ? 'bg-black text-white' : 'border border-gray-300 hover:bg-gray-50'
           }`}
-          style={mode === 'audio'
-            ? { boxShadow: '0 4px 16px rgba(78, 205, 196, 0.3)' }
-            : { background: 'rgba(160, 170, 191, 0.1)', border: '1px solid rgba(160, 170, 191, 0.1)' }
-          }
         >
           Audio
         </button>
         <button
           onClick={() => setMode('video')}
-          className={`flex-1 py-3 rounded-2xl font-semibold text-sm transition-all ${
-            mode === 'video'
-              ? 'bg-soft-blue text-white'
-              : 'text-silver-400'
+          className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
+            mode === 'video' ? 'bg-black text-white' : 'border border-gray-300 hover:bg-gray-50'
           }`}
-          style={mode === 'video'
-            ? { boxShadow: '0 4px 16px rgba(91, 141, 239, 0.3)' }
-            : { background: 'rgba(160, 170, 191, 0.1)', border: '1px solid rgba(160, 170, 191, 0.1)' }
-          }
         >
           Video
         </button>
       </div>
 
-      {/* Recorder */}
-      <div className="glass-card">
+      <div className="mt-6 bg-sand rounded-2xl p-6">
         {mode === 'audio' ? (
           <AudioRecorder onRecordingComplete={handleRecordingComplete} />
         ) : (
@@ -84,22 +68,16 @@ export default function RecordPage() {
         )}
       </div>
 
-      {/* Error */}
       {error && (
-        <div className="glass-card" style={{ borderLeft: '3px solid #E85D75' }}>
-          <p className="font-semibold text-rose-400">Something went wrong</p>
-          <p className="text-sm text-silver-500 mt-1">{error}</p>
+        <div className="mt-6 border-l-2 border-red-400 pl-4 py-2">
+          <p className="font-medium">Something went wrong</p>
+          <p className="text-sm text-stone mt-1">{error}</p>
         </div>
       )}
 
-      {/* Loading */}
       {analyzing && (
-        <div className="glass-card text-center py-8">
-          <div className="w-10 h-10 mx-auto mb-3 rounded-full border-2 border-aqua-400 border-t-transparent animate-spin" />
-          <p className="font-semibold text-silver-300">{stage}</p>
-          <div className="mt-3 bg-navy-800 rounded-full h-2 overflow-hidden max-w-xs mx-auto">
-            <div className="h-full bg-gradient-to-r from-aqua-500 to-aqua-400 rounded-full animate-pulse" style={{ width: '60%' }} />
-          </div>
+        <div className="mt-8 text-center py-8">
+          <p className="text-stone">{stage}</p>
         </div>
       )}
 

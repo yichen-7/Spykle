@@ -21,9 +21,7 @@ export default function VideoRecorder({ onRecordingComplete }: VideoRecorderProp
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       streamRef.current = stream
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-      }
+      if (videoRef.current) videoRef.current.srcObject = stream
     } catch (err) {
       console.error('Camera access denied:', err)
     }
@@ -74,49 +72,32 @@ export default function VideoRecorder({ onRecordingComplete }: VideoRecorderProp
   return (
     <div>
       {!recordedUrl ? (
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          playsInline
-          className="w-full rounded-xl bg-navy-900 aspect-video"
-        />
+        <video ref={videoRef} autoPlay muted playsInline className="w-full rounded-xl bg-black aspect-video" />
       ) : (
-        <video
-          ref={playbackRef}
-          controls
-          src={recordedUrl}
-          className="w-full rounded-xl bg-navy-900 aspect-video"
-        />
+        <video ref={playbackRef} controls src={recordedUrl} className="w-full rounded-xl bg-black aspect-video" />
       )}
 
       <div className="mt-4 flex items-center justify-between">
-        <div className="flex items-center gap-3 flex-1">
+        <div className="flex-1">
           {!isRecording && !recordedUrl && (
-            <button onClick={startRecording} className="btn-rose w-full">
+            <button onClick={startRecording} className="w-full bg-black text-white rounded-full py-3 px-6 text-sm font-medium hover:bg-gray-800 transition-colors">
               Record
             </button>
           )}
           {isRecording && (
-            <button onClick={stopRecording} className="btn-primary w-full">
-              Stop Recording
+            <button onClick={stopRecording} className="w-full bg-black text-white rounded-full py-3 px-6 text-sm font-medium hover:bg-gray-800 transition-colors">
+              Stop recording
             </button>
           )}
           {recordedUrl && (
-            <button
-              onClick={() => { setRecordedUrl(''); startCamera() }}
-              className="btn-secondary w-full"
-            >
-              Record Again
+            <button onClick={() => { setRecordedUrl(''); startCamera() }} className="w-full border border-gray-300 rounded-full py-3 px-6 text-sm font-medium hover:bg-gray-50 transition-colors">
+              Record again
             </button>
           )}
         </div>
 
         {isRecording && (
-          <span className="flex items-center gap-2 text-lg font-mono text-silver-300 ml-4">
-            <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
-            {formatTime(duration)}
-          </span>
+          <span className="text-sm text-stone ml-4 font-mono">{formatTime(duration)}</span>
         )}
       </div>
     </div>

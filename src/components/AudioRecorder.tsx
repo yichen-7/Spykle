@@ -30,10 +30,10 @@ export default function AudioRecorder({ onRecordingComplete }: AudioRecorderProp
     const dataArray = new Uint8Array(bufferLength)
     analyser.getByteTimeDomainData(dataArray)
 
-    ctx.fillStyle = 'rgba(17, 28, 50, 0.95)'
+    ctx.fillStyle = '#FAF8F5'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     ctx.lineWidth = 2
-    ctx.strokeStyle = '#4ECDC4'
+    ctx.strokeStyle = '#1a1a1a'
     ctx.beginPath()
 
     const sliceWidth = canvas.width / bufferLength
@@ -131,31 +131,27 @@ export default function AudioRecorder({ onRecordingComplete }: AudioRecorderProp
         ref={canvasRef}
         width={600}
         height={80}
-        className="w-full h-16 rounded-xl mb-4"
-        style={{ background: 'rgba(17, 28, 50, 0.95)' }}
+        className="w-full h-16 rounded-lg bg-cream mb-4"
       />
 
       {isRecording && (
         <div className="text-center mb-4">
-          <span className="text-3xl font-bold text-silver-100 font-mono">{formatTime(duration)}</span>
-          <div className="flex items-center justify-center gap-2 mt-1">
-            <span className={`w-2 h-2 rounded-full ${isPaused ? 'bg-amber-400' : 'bg-rose-500 animate-pulse'}`} />
-            <span className="text-sm text-silver-500">{isPaused ? 'Paused' : 'Recording'}</span>
-          </div>
+          <span className="text-3xl font-serif font-bold">{formatTime(duration)}</span>
+          <p className="text-sm text-stone mt-1">{isPaused ? 'Paused' : 'Recording...'}</p>
         </div>
       )}
 
       <div className="flex justify-center gap-3">
         {!isRecording ? (
-          <button onClick={startRecording} className="btn-rose w-full">
-            Start Recording
+          <button onClick={startRecording} className="w-full bg-black text-white rounded-full py-3 px-6 text-sm font-medium hover:bg-gray-800 transition-colors">
+            Start recording
           </button>
         ) : (
           <>
-            <button onClick={togglePause} className="btn-secondary flex-1">
+            <button onClick={togglePause} className="flex-1 border border-gray-300 rounded-full py-3 px-6 text-sm font-medium hover:bg-gray-50 transition-colors">
               {isPaused ? 'Resume' : 'Pause'}
             </button>
-            <button onClick={stopRecording} className="btn-primary flex-1">
+            <button onClick={stopRecording} className="flex-1 bg-black text-white rounded-full py-3 px-6 text-sm font-medium hover:bg-gray-800 transition-colors">
               Stop
             </button>
           </>
@@ -163,7 +159,7 @@ export default function AudioRecorder({ onRecordingComplete }: AudioRecorderProp
       </div>
 
       {audioUrl && (
-        <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(160, 170, 191, 0.1)' }}>
+        <div className="mt-4 pt-4 border-t border-gray-200">
           <audio controls src={audioUrl} className="w-full" />
         </div>
       )}

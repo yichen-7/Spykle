@@ -24,45 +24,43 @@ export default function ReviewPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="text-center">
-        <h1 className="text-xl font-bold text-silver-100">Video Review</h1>
-        <p className="text-sm text-silver-500 mt-1">Record, comment, and analyze</p>
-      </div>
+    <div className="pt-8">
+      <h1 className="font-serif text-3xl font-bold">Video Review</h1>
+      <p className="text-stone mt-2">Record or upload a video, add comments, and get analysis.</p>
 
       {mode === 'choose' && (
-        <div className="space-y-3">
-          <button onClick={() => setMode('record')} className="btn-rose w-full">
-            Record Video
+        <div className="mt-8 space-y-3">
+          <button onClick={() => setMode('record')} className="w-full bg-black text-white rounded-full py-3 px-6 text-sm font-medium hover:bg-gray-800 transition-colors">
+            Record video
           </button>
-          <label className="btn-secondary w-full block text-center cursor-pointer">
+          <label className="w-full border border-gray-300 rounded-full py-3 px-6 text-sm font-medium hover:bg-gray-50 transition-colors block text-center cursor-pointer">
             <input type="file" accept="video/*" onChange={handleUpload} className="hidden" />
-            Upload Video
+            Upload video
           </label>
         </div>
       )}
 
       {mode === 'record' && (
-        <div className="space-y-4">
+        <div className="mt-8 space-y-4">
           <button
             onClick={() => setMode('choose')}
-            className="text-sm text-aqua-400 hover:text-aqua-300 font-semibold transition-colors"
+            className="text-sm text-stone hover:text-black transition-colors"
           >
             &larr; Back
           </button>
-          <div className="glass-card">
+          <div className="bg-sand rounded-2xl p-6">
             <VideoRecorder onRecordingComplete={handleRecordComplete} />
           </div>
         </div>
       )}
 
       {mode === 'review' && videoBlob && (
-        <div className="space-y-4">
+        <div className="mt-8 space-y-4">
           <button
             onClick={() => { setMode('choose'); setVideoBlob(null); setVideoUrl('') }}
-            className="text-sm text-aqua-400 hover:text-aqua-300 font-semibold transition-colors"
+            className="text-sm text-stone hover:text-black transition-colors"
           >
-            &larr; Start Over
+            &larr; Start over
           </button>
           <VideoReviewer videoUrl={videoUrl} videoBlob={videoBlob} />
         </div>

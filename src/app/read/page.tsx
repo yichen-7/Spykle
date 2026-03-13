@@ -54,41 +54,38 @@ export default function ReadPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="text-center">
-        <h1 className="text-xl font-bold text-silver-100">Read Aloud</h1>
-        <p className="text-sm text-silver-500 mt-1">Upload text and practice reading</p>
+    <div className="pt-8">
+      <h1 className="font-serif text-3xl font-bold">Read Aloud</h1>
+      <p className="text-stone mt-2">Upload a text, read it out loud, and get feedback.</p>
+
+      <div className="mt-8">
+        <input ref={fileInputRef} type="file" accept=".pdf,.txt" onChange={handleFileUpload} className="hidden" />
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="w-full border border-gray-300 rounded-full py-3 px-6 text-sm font-medium hover:bg-gray-50 transition-colors"
+        >
+          Upload PDF or text file
+        </button>
+        {fileName && <p className="text-center text-sm text-stone mt-2">{fileName}</p>}
       </div>
 
-      {/* Upload */}
-      <input ref={fileInputRef} type="file" accept=".pdf,.txt" onChange={handleFileUpload} className="hidden" />
-      <button onClick={() => fileInputRef.current?.click()} className="btn-soft-blue w-full">
-        Upload PDF or Text File
-      </button>
-      {fileName && (
-        <p className="text-center text-sm text-silver-500">{fileName}</p>
-      )}
-
-      {/* Text Display */}
       {bookText && (
-        <div className="glass-card max-h-48 overflow-y-auto">
-          <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider mb-2">Text to Read</p>
-          <p className="text-silver-300 leading-relaxed whitespace-pre-wrap text-sm">{bookText}</p>
+        <div className="mt-6 bg-sand rounded-2xl p-6 max-h-48 overflow-y-auto">
+          <p className="text-xs text-stone uppercase tracking-wider mb-2">Text to read</p>
+          <p className="leading-relaxed text-sm whitespace-pre-wrap">{bookText}</p>
         </div>
       )}
 
-      {/* Record */}
       {bookText && (
-        <div className="glass-card">
-          <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider mb-3">Record Your Reading</p>
+        <div className="mt-6 bg-sand rounded-2xl p-6">
+          <p className="text-xs text-stone uppercase tracking-wider mb-3">Record your reading</p>
           <AudioRecorder onRecordingComplete={handleRecordingComplete} />
         </div>
       )}
 
       {analyzing && (
-        <div className="glass-card text-center py-8">
-          <div className="w-10 h-10 mx-auto mb-3 rounded-full border-2 border-aqua-400 border-t-transparent animate-spin" />
-          <p className="font-semibold text-silver-300">Analyzing your reading...</p>
+        <div className="mt-8 text-center py-8">
+          <p className="text-stone">Analyzing your reading...</p>
         </div>
       )}
 

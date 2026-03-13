@@ -25,11 +25,9 @@ export default function ProgressPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  const totalXP = sessions.reduce((sum, s) => sum + Math.round(s.overallScore * 10), 0)
-  const level = Math.floor(totalXP / 100) + 1
   const avgScore = sessions.length > 0
     ? (sessions.reduce((sum, s) => sum + s.overallScore, 0) / sessions.length).toFixed(1)
-    : '0'
+    : '—'
 
   const weakestArea = sessions.length > 0 ? (() => {
     const avg = (key: keyof SessionSummary) => sessions.reduce((s, x) => s + (x[key] as number), 0) / sessions.length
@@ -38,92 +36,70 @@ export default function ProgressPage() {
   })() : null
 
   return (
-    <div className="space-y-5">
-      <div className="text-center">
-        <h1 className="text-xl font-bold text-silver-100">Progress</h1>
-        <p className="text-sm text-silver-500 mt-1">Track your improvement</p>
-      </div>
+    <div className="pt-8">
+      <h1 className="font-serif text-3xl font-bold">Progress</h1>
+      <p className="text-stone mt-2">Track your improvement over time.</p>
 
       {loading ? (
-        <div className="glass-card text-center py-8">
-          <div className="w-10 h-10 mx-auto rounded-full border-2 border-aqua-400 border-t-transparent animate-spin" />
+        <div className="mt-12 text-center">
+          <p className="text-stone">Loading...</p>
         </div>
       ) : sessions.length === 0 ? (
-        <div className="glass-card text-center py-8">
-          <p className="font-semibold text-silver-300">No sessions yet</p>
-          <p className="text-sm text-silver-500 mt-1">Complete your first recording to see progress</p>
-          <a href="/record" className="btn-primary inline-block mt-4">Start Recording</a>
+        <div className="mt-12 text-center">
+          <p className="font-serif text-xl font-bold">No sessions yet</p>
+          <p className="text-stone mt-2 text-sm">Complete your first recording to see progress.</p>
+          <a href="/record" className="inline-block mt-4 bg-black text-white rounded-full py-3 px-6 text-sm font-medium hover:bg-gray-800 transition-colors">
+            Start recording
+          </a>
         </div>
       ) : (
         <>
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="glass-card text-center">
-              <p className="text-3xl font-bold text-aqua-400">{level}</p>
-              <p className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider">Level</p>
+          {/* Stats */}
+          <div className="mt-8 grid grid-cols-3 gap-4">
+            <div className="bg-sand rounded-xl p-4 text-center">
+              <p className="font-serif text-2xl font-bold">{sessions.length}</p>
+              <p className="text-xs text-stone mt-1">Sessions</p>
             </div>
-            <div className="glass-card text-center">
-              <p className="text-3xl font-bold text-amber-400">{totalXP}</p>
-              <p className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider">Total XP</p>
+            <div className="bg-sand rounded-xl p-4 text-center">
+              <p className="font-serif text-2xl font-bold">{avgScore}</p>
+              <p className="text-xs text-stone mt-1">Avg score</p>
             </div>
-            <div className="glass-card text-center">
-              <p className="text-3xl font-bold text-soft-blue">{avgScore}</p>
-              <p className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider">Avg Score</p>
-            </div>
-            <div className="glass-card text-center">
-              <p className="text-3xl font-bold text-soft-purple">{sessions.length}</p>
-              <p className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider">Sessions</p>
+            <div className="bg-sand rounded-xl p-4 text-center">
+              <p className="font-serif text-2xl font-bold">{weakestArea || '—'}</p>
+              <p className="text-xs text-stone mt-1">Focus area</p>
             </div>
           </div>
 
-          {/* Weakest Area */}
-          {weakestArea && (
-            <div className="glass-card" style={{ borderLeft: '3px solid #F0B840' }}>
-              <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider">Focus Area</p>
-              <p className="font-bold text-lg text-silver-100 mt-1">{weakestArea}</p>
-            </div>
-          )}
-
           {/* Score Trend */}
-          <div className="glass-card">
-            <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider mb-3">Score Trend</p>
+          <div className="mt-8">
+            <p className="text-xs text-stone uppercase tracking-wider mb-3">Score trend</p>
             <div className="h-32 flex items-end gap-1.5">
               {sessions.slice(0, 15).reverse().map((s, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
                   <div
-                    className="w-full rounded-t-lg"
-                    style={{
-                      height: `${(s.overallScore / 10) * 100}%`,
-                      minHeight: '4px',
-                      background: 'linear-gradient(to top, #3BA99E, #4ECDC4)',
-                    }}
+                    className="w-full rounded-t bg-black"
+                    style={{ height: `${(s.overallScore / 10) * 100}%`, minHeight: '4px' }}
                   />
-                  <span className="text-[10px] text-silver-600 font-semibold">{s.overallScore}</span>
+                  <span className="text-[10px] text-stone">{s.overallScore}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Recent Sessions */}
-          <div className="space-y-2">
-            <p className="text-xs font-semibold text-silver-500 uppercase tracking-wider">Recent Sessions</p>
-            {sessions.slice(0, 8).map(session => (
-              <div key={session.id} className="glass-card-light flex items-center justify-between py-3">
-                <div>
-                  <p className="font-semibold text-silver-200 text-sm capitalize">{session.mode}</p>
-                  <p className="text-xs text-silver-600">{new Date(session.date).toLocaleDateString()}</p>
+          <div className="mt-8">
+            <p className="text-xs text-stone uppercase tracking-wider mb-3">Recent sessions</p>
+            <div className="space-y-2">
+              {sessions.slice(0, 8).map(session => (
+                <div key={session.id} className="flex items-center justify-between bg-sand rounded-xl px-5 py-3">
+                  <div>
+                    <p className="text-sm font-medium capitalize">{session.mode}</p>
+                    <p className="text-xs text-stone">{new Date(session.date).toLocaleDateString()}</p>
+                  </div>
+                  <p className="font-serif font-bold text-lg">{session.overallScore}<span className="text-stone text-sm font-normal">/10</span></p>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className={`text-lg font-bold ${
-                    session.overallScore >= 7 ? 'text-aqua-400' :
-                    session.overallScore >= 5 ? 'text-amber-400' : 'text-rose-400'
-                  }`}>
-                    {session.overallScore}
-                  </span>
-                  <span className="text-xs text-silver-600">/10</span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </>
       )}

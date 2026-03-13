@@ -1,14 +1,14 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
-import BottomNav from '@/components/BottomNav'
-import TopBar from '@/components/TopBar'
+import Nav from '@/components/Nav'
 
-const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700'] })
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-serif' })
 
 export const metadata: Metadata = {
-  title: 'Spykle — Level Up Your Speaking',
-  description: 'AI-powered speech analysis to help you speak with confidence',
+  title: 'Spykle',
+  description: 'Train your voice',
 }
 
 export default function RootLayout({
@@ -18,12 +18,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} watercolor-bg`}>
-        <TopBar />
-        <main className="relative z-10 pb-24 pt-16 px-4 max-w-lg mx-auto">
+      <body className={`${inter.variable} ${playfair.variable} font-sans`}>
+        <Nav />
+        <main className="max-w-2xl mx-auto px-5 pb-32 pt-6">
           {children}
         </main>
-        <BottomNav />
       </body>
     </html>
   )
