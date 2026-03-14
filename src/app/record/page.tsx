@@ -37,8 +37,8 @@ export default function RecordPage() {
   }
 
   return (
-    <div className="pt-8">
-      <h1 className="font-serif text-3xl font-bold">Record & Analyze</h1>
+    <div className="pt-6 sm:pt-8">
+      <h1 className="font-serif text-2xl sm:text-3xl font-bold">Record & Analyze</h1>
       <p className="text-stone mt-2">Speak and get instant feedback on your delivery.</p>
 
       <div className="mt-8 flex gap-2">
@@ -60,7 +60,7 @@ export default function RecordPage() {
         </button>
       </div>
 
-      <div className="mt-6 bg-sand rounded-2xl p-6">
+      <div className="mt-6 bg-sand rounded-2xl p-4 sm:p-6">
         {mode === 'audio' ? (
           <AudioRecorder onRecordingComplete={handleRecordingComplete} />
         ) : (

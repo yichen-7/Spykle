@@ -4,15 +4,15 @@ import Link from 'next/link'
 
 export default function Dashboard() {
   return (
-    <div className="pt-12">
-      <h1 className="font-serif text-5xl font-bold leading-tight">
+    <div className="pt-8 sm:pt-12">
+      <h1 className="font-serif text-3xl sm:text-5xl font-bold leading-tight">
         Spykle
       </h1>
-      <p className="text-lg text-stone mt-4 max-w-md leading-relaxed">
+      <p className="text-base sm:text-lg text-stone mt-3 sm:mt-4 max-w-md leading-relaxed">
         Train your speaking voice. Record yourself, get AI feedback, and improve over time.
       </p>
 
-      <div className="mt-12 bg-sand rounded-2xl p-8">
+      <div className="mt-8 sm:mt-12 bg-sand rounded-2xl p-5 sm:p-8">
         <div className="flex items-start justify-between">
           <div>
             <h2 className="font-serif text-2xl font-bold">Start training</h2>

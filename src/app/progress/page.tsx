@@ -55,7 +55,7 @@ export default function ProgressPage() {
       ) : (
         <>
           {/* Stats */}
-          <div className="mt-8 grid grid-cols-3 gap-4">
+          <div className="mt-8 grid grid-cols-3 gap-2 sm:gap-4">
             <div className="bg-sand rounded-xl p-4 text-center">
               <p className="font-serif text-2xl font-bold">{sessions.length}</p>
               <p className="text-xs text-stone mt-1">Sessions</p>

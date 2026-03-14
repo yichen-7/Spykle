@@ -121,12 +121,12 @@ export default function PracticePage() {
       <h1 className="font-serif text-3xl font-bold">Practice</h1>
       <p className="text-stone mt-2">Train your speaking skills with daily exercises.</p>
 
-      <div className="mt-8 flex gap-2">
+      <div className="mt-8 flex flex-wrap gap-2">
         {(['philosophy', 'daily', 'twisters'] as const).map(t => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-5 py-2 rounded-full text-sm font-medium transition-colors capitalize ${
+            className={`px-4 sm:px-5 py-2 rounded-full text-sm font-medium transition-colors capitalize ${
               tab === t ? 'bg-black text-white' : 'border border-gray-300 hover:bg-gray-50'
             }`}
           >
